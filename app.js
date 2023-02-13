@@ -4,12 +4,20 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
+require("dotenv").config({path: `./config.env`});
+
+var { mongoConnect } = require(`./mongo.js`);
+mongoConnect();
+
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const blogRouter =  require(`./routes/blogs`);
 
 const app = express();
 //const port = 3001;
+
+const dbo = require('./db/conn');
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -40,6 +48,14 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
+dbo.connectToServer(function(err){
+  if(err){
+    console.log(err);
+    process.exit();
+  }
+})
 
 // app.listen(port, () => {
 //   console.log("Example.")

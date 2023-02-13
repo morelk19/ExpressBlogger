@@ -20,7 +20,7 @@ const validateBlogData = (userData) =>{
             message: "Author must be a string.",
         }
     }
-    if(userData.category === undefined || typeof(userData.category) !== "object"){
+    if(userData.categories === undefined || typeof(userData.categories) !== "object"){
         return {
             success: false,
             message: "Category must be an object.",

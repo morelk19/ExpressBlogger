@@ -1,6 +1,9 @@
 var express = require('express');
-const { validatedBlogData } = require('../validation/blogs');
+const { validateUserData } = require('../validation/users');
 var router = express.Router();
+
+
+const users = {};
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -27,14 +30,24 @@ router.post("/create-one", (req, res) =>{
       lastModified: new Date()
     }
 
-    const userDataCheck = validatedUser
-  }catch(e){
-    console.log(e);
-    res.json({
-      success: false,
-      error: String(e)
-    })
-  }
+    const userDataCheck = validateUserData(newUser);
+
+    if(userDataCheck.success === false){
+      throw Error(userDataCheck.message)
+    }
+
+   sampleBlogs.push(newBlog);
+   res.json({
+     success: true,
+   })
+
+ }catch(e){
+   console.log(e);
+   res.json({
+     success: false,
+     error: String(e)
+   })
+ }
 })
 
 module.exports = router;
