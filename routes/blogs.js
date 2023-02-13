@@ -30,21 +30,22 @@ router.get("/all", async function (req, res, next){
   
   });
 
-router.get("/single/:titleToGet", async function (req, res, next){
+router.get("/single/:idToGet", async function (req, res, next){
 
 const agg = [
   {
     '$search': {
       'index': 'blogIndex', 
       'text': {
-        'query': req.params.titleToGet, 
-        'path': 'title'
+        'query': req.params.idToGet, 
+        'path': 'id'
       }
     }
   }
 ];
 
-const client = await db('blog_data').collection('sample_blogs');
+const client = await db('blog_data')
+.collection('sample_blogs');
 const cursor = client.aggregate(agg);
 const result = await cursor.toArray();
 
