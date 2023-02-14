@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const { validateBlogData } = require('../validation/blogs');
 
+
 const { db } = require('../mongo');
 
 
@@ -14,7 +15,7 @@ router.get('/', function(req, res, next) {
 router.get("/all", async function (req, res, next){
 	const blogs = await db()
 	  .collection('sample_blogs')
-	  .find({})
+	  .find()
 	  .toArray(function(err, result){
 		if(err){
 		  res.status(400).send('error fetching blogs')
@@ -30,7 +31,7 @@ router.get("/all", async function (req, res, next){
   
   });
 
-router.get("/single/:idToGet", async function (req, res, next){
+router.get("/get-one/:idToGet", async function (req, res, next){
 
 const agg = [
   {
@@ -55,12 +56,30 @@ const result = await cursor.toArray();
 	})
 })
 
-router.delete("/single/:titleToGet", async function (req, res, next){
+router.get("/get-one", async function (req, res, next){
+  const blogs = await db()
+  .collection('sample_blogs')
+  .find()
+  .limit(1)
+  .toArray(function(err, result){
+  if(err){
+    res.status(400).send('error fetching blogs')
+  }else{
+    res.json(result)
+  }
+  })
 
-const blogQuery = {title: req.params.titleToGet};
-res.json({
-  blogQuery: blogQuery,
+  res.json({
+  success:true,
+  blogs: blogs,
+  })
+
 })
+
+router.delete("/delete-one/:id", async function (req, res, next){
+
+const blogQuery = {id: req.params.id};
+
 
 const removedBlog = await db('blog_data')
   .collection('sample_blogs')
@@ -79,6 +98,7 @@ const removedBlog = await db('blog_data')
 router.post("/create-one", async function (req, res){
 
     try{
+      const id = new uuidv4();
       const text = req.body.text;
       const title = req.body.title;
       const author = req.body.author;
@@ -87,6 +107,7 @@ router.post("/create-one", async function (req, res){
       const lastModified = new Date();
 
       const newBlog ={
+        id,
         text,
         title,
         author,
@@ -200,7 +221,37 @@ router.post("/create-one", async function (req, res){
       })
     }
   })
-  
+
+
+  router.get("/get-multi/:search", async function (req, res, next){
+    const searchTitle  = req.query.title;
+    const searchId = req.query.id;
+    const searchAuthor = req.query.author;
+    res.json({
+      success:true,
+      searchAuthor: searchAuthor
+      })
+        
+
+    const blogs = await db()
+      .collection('sample_blogs')
+      .find({
+        "author" : searchAuthor
+       })
+      .toArray(function(err, result){
+      if(err){
+        res.status(400).send('error fetching blogs')
+      }else{
+        res.json(result)
+      }
+      })
+    
+      res.json({
+      success:true,
+      searchAuthor: searchAuthor
+      })
+    
+    });
  
 
 module.exports = router;
