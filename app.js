@@ -11,7 +11,7 @@ require("dotenv").config({path: `./config.env`});
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-//const blogRouter =  require(`./routes/blogs`);
+const blogRouter =  require(`./routes/blogs`);
 
 const app = express();
 //const port = 3001;
@@ -31,7 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-//app.use('/blogs', blogRouter)
+app.use('/blogs', blogRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
